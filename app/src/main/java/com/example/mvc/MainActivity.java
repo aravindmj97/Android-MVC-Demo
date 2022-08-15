@@ -5,8 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -27,8 +31,10 @@ import okhttp3.ResponseBody;
 
 public class MainActivity extends AppCompatActivity implements Observer, View.OnClickListener{
 
-    Button b1, b2, b3, b4;
-    TextView t;
+    Button getNewsBtn;
+    TextView newsTextView, sumResultTextView;
+    EditText num1EditText, num2EditText;
+    ImageView plusImageView;
     Model model;
 
     @Override
@@ -36,39 +42,25 @@ public class MainActivity extends AppCompatActivity implements Observer, View.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        getNewsBtn = findViewById(R.id.getNewsBtn);
+        newsTextView = findViewById(R.id.newsTextView);
+        sumResultTextView = findViewById(R.id.sumResultTextView);
+        num1EditText = findViewById(R.id.num1EditText);
+        num2EditText = findViewById(R.id.num2EditText);
+        plusImageView = findViewById(R.id.plusImageView);
+
         model = new Model();
         model.addObserver(this);
+        model.refreshModel();
 
-        b1 = findViewById(R.id.button);
-        b2 = findViewById(R.id.button2);
-        b3 = findViewById(R.id.button3);
-        b4 = findViewById(R.id.button4);
-        t = findViewById(R.id.textView);
-
-        b1.setOnClickListener(this);
-        b2.setOnClickListener(this);
-        b3.setOnClickListener(this);
-        b4.setOnClickListener(this);
-
+        getNewsBtn.setOnClickListener(this);
+        plusImageView.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch(v.getId()){
-
-            case R.id.button:
-                model.setList(0);
-                break;
-
-            case R.id.button2:
-                model.setList(1);
-                break;
-
-            case R.id.button3:
-                model.setList(2);
-                break;
-
-            case R.id.button4:
+            case R.id.getNewsBtn:
                 try {
                      runOnUiThread(new Runnable() {
 
@@ -85,15 +77,18 @@ public class MainActivity extends AppCompatActivity implements Observer, View.On
                     e.printStackTrace();
                 }
                 break;
+            case R.id.plusImageView:
+                model.setNumForAddition(Integer.parseInt(num1EditText.getText().toString()), Integer.parseInt(num2EditText.getText().toString()));
+                break;
         }
     }
 
     @Override
     public void update(Observable o, Object arg) {
-        b1.setText("Count: "+model.getInt(0));
-        b2.setText("Count: "+model.getInt(1));
-        b3.setText("Count: "+model.getInt(2));
-        t.setText(model.getNewsContent());
+        newsTextView.setText(model.getNewsContent());
+        sumResultTextView.setText(model.getSum());
+        num1EditText.setText(String.valueOf(model.getNum1()));
+        num2EditText.setText(String.valueOf(model.getNum2()));
     }
 
     public void fetchNews() throws IOException{

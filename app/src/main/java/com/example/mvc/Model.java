@@ -30,26 +30,33 @@ import okhttp3.ResponseBody;
 
 public class Model extends Observable {
 
-    private List<Integer> list;
+    private Integer num1, num2;
     private String newsContent;
 
     public Model() {
-        list = new ArrayList<Integer>(3);
-        newsContent = "";
-
-        list.add(0);
-        list.add(0);
-        list.add(0);
+        this.newsContent = "News will appear here";
+        this.num1 = 0;
+        this.num2 = 0;
     }
 
-    public int getInt(int index) throws IndexOutOfBoundsException{
-        return list.get(index);
-    }
-
-    public void setList(int index) throws IndexOutOfBoundsException{
-        list.set(index, list.get(index)+1);
+    public void setNumForAddition(Integer num1, Integer num2) {
+        this.num1 = num1;
+        this.num2 = num2;
         setChanged();
         notifyObservers();
+    }
+
+    public Integer getNum1() {
+        return num1;
+    }
+
+    public Integer getNum2() {
+        return num2;
+    }
+
+    public String getSum() {
+        Integer sum = num1 + num2;
+        return "Sum: " + sum;
     }
 
     public String getNewsContent() {
@@ -62,5 +69,9 @@ public class Model extends Observable {
         notifyObservers();
     }
 
+    public void refreshModel(){
+        setChanged();
+        notifyObservers();
+    }
 
 }
